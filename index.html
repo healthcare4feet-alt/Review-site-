@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReviewAsk</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#1b6ef3">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ReviewAsk"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="icon-192.png"><style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#f3f5f8;color:#1d2433}
+header{background:#1b6ef3;color:#fff;padding:14px 16px;font-weight:700;font-size:20px}
+nav{display:flex;background:#fff;border-bottom:1px solid #dde}nav button{flex:1;padding:12px 4px;border:0;background:none;font-size:15px;color:#555;border-bottom:3px solid transparent}
+nav button.on{color:#1b6ef3;border-color:#1b6ef3;font-weight:600}
+main{max-width:560px;margin:auto;padding:16px}.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px #0001}
+label{display:block;font-size:13px;color:#555;margin:10px 0 4px}input,textarea{width:100%;padding:10px;border:1px solid #ccd;border-radius:8px;font-size:16px}textarea{min-height:110px}
+.btn{display:inline-block;padding:11px 16px;border:0;border-radius:8px;background:#1b6ef3;color:#fff;font-size:15px;margin:8px 6px 0 0;cursor:pointer;text-decoration:none}
+.btn.g{background:#1a9d55}.btn.o{background:#e08a00}.btn.s{background:#eef;color:#1b6ef3}
+.hidden{display:none}.note{font-size:13px;color:#666}.preview{white-space:pre-wrap;background:#f7f8fb;padding:10px;border-radius:8px;font-size:14px}
+.row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;padding:10px 0;gap:8px}.row:last-child{border:0}
+.tag{font-size:12px;padding:2px 8px;border-radius:10px;background:#eee}.tag.due{background:#ffe2b8}.tag.done{background:#c9f0d6}
+.lrow{border-top:1px solid #eee;padding:8px 0}.lrow .flex{display:flex;gap:6px;align-items:center}.lrow input{flex:1}.ok{color:#1a9d55;font-size:12px}.bad{color:#c33;font-size:12px}.tip{font-size:12px;color:#666;margin:4px 0}
+.site{display:block;width:100%;text-align:center;font-size:17px;padding:15px;margin:10px 0}#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:8px;opacity:0;transition:.3s}
+</style></head><body>
+<header id="hdr">ReviewAsk</header>
+<nav id="nav"><button data-tab="ask" class="on">Ask</button><button data-tab="history">History</button><button data-tab="settings">Settings</button></nav>
+<main>
+<section id="ask"><div class="card"><h3>Ask for a review</h3>
+<label>Customer name</label><input id="cName"><label>Email</label><input id="cEmail" type="email"><label>Mobile</label><input id="cMobile" type="tel">
+<label>Job done</label><input id="cJob" placeholder="e.g. Nail cutting">
+<label>Message (use {name} {business} {job} {link})</label><textarea id="tpl"></textarea>
+<button class="btn s" id="resetTpl">Reset message</button>
+<p class="note">Preview:</p><div class="preview" id="preview"></div>
+<button class="btn" id="sendEmail">Send by email</button><button class="btn g" id="sendSms">Send by text</button><button class="btn s" id="openLanding">Preview review page</button>
+<p class="note">These open your own email or text app with the message filled in, so you press send yourself. Nothing is sent by this app.</p></div></section>
+<section id="history" class="hidden"><div class="card"><h3>History</h3><div id="hist"></div><button class="btn s" id="clearHist">Clear history</button></div></section>
+<section id="settings" class="hidden"><div class="card"><h3>Your business</h3>
+<label>Business name</label><input id="sBiz"><label>Town / postcode</label><input id="sTown" placeholder="e.g. Stocksbridge S36">
+<button class="btn s" id="findLinks">Find my links</button>
+<div id="finder" class="hidden"><p class="note">Tap Search to look yourself up in a new tab, open your review page, copy its link, then tap Paste.</p></div>
+<div id="linkRows"></div><button class="btn" id="saveSettings">Save</button><p class="note">Saved on this device only.</p></div></section>
+<section id="landing" class="hidden"><div class="card"><h2 id="lTitle"></h2><p>Thank you for using us. Please tap a site below to leave your honest review, good or bad.</p><div id="lSites"></div>
+<button class="btn s" id="backApp">Back to app</button></div></section>
+</main><div id="toast"></div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+const $=id=>document.getElementById(id),SITES=['Google','Facebook','Trustpilot','Checkatrade'];
+const DEF='Hi {name}, thanks for choosing {business} for your {job}. Would you mind leaving a quick review? It really helps a small business.\n{link}';
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let S=load('ra_settings',{biz:'',links:{}}),H=load('ra_history',[]);
+function toast(t){$('toast').textContent=t;$('toast').style.opacity=1;setTimeout(()=>$('toast').style.opacity=0,1800)}
+function show(t){['ask','history','settings','landing'].forEach(s=>$(s).classList.toggle('hidden',s!==t));
+ document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));$('nav').classList.toggle('hidden',t==='landing');if(t==='history')renderHist()}
+function link(){const d=btoa(unescape(encodeURIComponent(JSON.stringify({b:S.biz,l:S.links}))));return location.href.split(/[?#]/)[0]+'?r='+encodeURIComponent(d)}
+function msg(n,j){return $('tpl').value.replace(/{name}/g,n||'there').replace(/{business}/g,S.biz||'us').replace(/{job}/g,j||'visit').replace(/{link}/g,link())}
+function upd(){$('preview').textContent=msg($('cName').value,$('cJob').value);save('ra_tpl',$('tpl').value)}
+$('tpl').value=load('ra_tpl',DEF);['cName','cJob','tpl'].forEach(i=>$(i).addEventListener('input',upd));
+$('resetTpl').addEventListener('click',()=>{$('tpl').value=DEF;upd()});
+$('sTown').value=S.town||'';
+const FIND={Google:{u:q=>'https://www.google.com/search?q='+q,re:/(google\.[a-z.]+|g\.page|goo\.gl|maps\.app\.goo\.gl)/i,tip:'On your business panel tap "Write a review" and copy that link, or in Google Business Profile use "Ask for reviews" to get it.'},
+ Facebook:{u:q=>'https://www.facebook.com/search/pages/?q='+q,re:/(facebook\.com|fb\.me|fb\.com)/i,tip:'Open your page, go to Reviews, and copy the page address.'},
+ Trustpilot:{u:q=>'https://uk.trustpilot.com/search?query='+q,re:/trustpilot\.com/i,tip:'Open your business page and copy its link (ends in /review/yourwebsite).'},
+ Checkatrade:{u:q=>'https://www.google.com/search?q='+encodeURIComponent('site:checkatrade.com ')+q,re:/checkatrade\.com/i,tip:'Checkatrade has no public search link, so this searches Google for your Checkatrade profile. Copy your profile link.'}};
+const rows=$('linkRows');SITES.forEach(s=>{const d=document.createElement('div');d.className='lrow';
+ d.innerHTML='<label>'+s+' review link</label><div class="flex"><button class="btn s fs hidden" data-site="'+s+'">Search</button><input id="s'+s+'"><button class="btn s" data-paste="'+s+'">Paste</button></div><div class="tip hidden" id="tip'+s+'">'+FIND[s].tip+'</div><div id="chk'+s+'"></div>';rows.appendChild(d)});
+function chk(s){const v=$('s'+s).value.trim(),c=$('chk'+s);if(!v){c.className='';c.textContent='';return}
+ let okUrl=true;try{new URL(v)}catch(e){okUrl=false}const good=okUrl&&FIND[s].re.test(v);c.className=good?'ok':'bad';c.textContent=good?'✓ Looks like a '+s+' link':'⚠ This doesn\'t look like a '+s+' link'}
+SITES.forEach(s=>$('s'+s).addEventListener('input',()=>chk(s)));
+$('findLinks').addEventListener('click',()=>{if(!$('sBiz').value.trim())return toast('Enter your business name first');$('finder').classList.remove('hidden');
+ document.querySelectorAll('.fs,[id^=tip]').forEach(e=>e.classList.remove('hidden'))});
+rows.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.site){const q=encodeURIComponent(($('sBiz').value+' '+$('sTown').value).trim()).replace(/%20/g,'+');window.open(FIND[b.dataset.site].u(q),'_blank','noopener')}
+ if(b.dataset.paste){const s=b.dataset.paste,i=$('s'+s);try{const t=await navigator.clipboard.readText();if(!t)throw 0;i.value=t.trim();chk(s)}catch(err){i.focus();i.select();toast('Press and hold (or Cmd+V) to paste')}}});
+$('sBiz').value=S.biz;SITES.forEach(s=>setTimeout(()=>chk(s)));SITES.forEach(s=>$('s'+s).value=S.links[s]||'');
+$('saveSettings').addEventListener('click',()=>{S={biz:$('sBiz').value.trim(),town:$('sTown').value.trim(),links:{}};SITES.forEach(s=>{const v=$('s'+s).value.trim();if(v)S.links[s]=v});save('ra_settings',S);upd();toast('Settings saved')});
+function go(url){const a=document.createElement('a');a.href=url;a.click()}
+function record(c,via){H.unshift({...c,via,date:Date.now(),reviewed:false});save('ra_history',H)}
+function cust(){return{name:$('cName').value.trim(),email:$('cEmail').value.trim(),mobile:$('cMobile').value.trim(),job:$('cJob').value.trim()}}
+$('sendEmail').addEventListener('click',()=>{const c=cust();if(!c.email)return toast('Enter an email address');
+ go('mailto:'+encodeURIComponent(c.email)+'?subject='+encodeURIComponent('Thanks from '+(S.biz||'us'))+'&body='+encodeURIComponent(msg(c.name,c.job)));record(c,'email');toast('Email app opened')});
+$('sendSms').addEventListener('click',()=>{const c=cust();if(!c.mobile)return toast('Enter a mobile number');
+ go('sms:'+c.mobile.replace(/\s/g,'')+'?&body='+encodeURIComponent(msg(c.name,c.job)));record(c,'text');toast('Text app opened')});
+$('openLanding').addEventListener('click',()=>{location.href=link()});
+function renderHist(){const h=$('hist');if(!H.length){h.innerHTML='<p class="note">No requests yet.</p>';return}
+ h.innerHTML='';H.forEach((x,i)=>{const days=Math.floor((Date.now()-x.date)/864e5),due=!x.reviewed&&days>=7;
+ const r=document.createElement('div');r.className='row';
+ r.innerHTML='<div><b></b><br><span class="note"></span></div><div></div>';r.querySelector('b').textContent=x.name||'(no name)';
+ r.querySelector('.note').textContent=(x.job||'')+' · '+x.via+' · '+new Date(x.date).toLocaleDateString('en-GB')+' ('+days+'d ago)';
+ const a=r.lastChild,t=document.createElement('span');t.className='tag '+(x.reviewed?'done':due?'due':'');t.textContent=x.reviewed?'Reviewed':due?'Reminder due':'Waiting';a.appendChild(t);
+ if(!x.reviewed){const m=document.createElement('button');m.className='btn s';m.textContent='Mark reviewed';m.dataset.act='done';m.dataset.i=i;a.appendChild(m)}
+ if(due){const m=document.createElement('button');m.className='btn o';m.textContent='Remind';m.dataset.act='remind';m.dataset.i=i;a.appendChild(m)}
+ h.appendChild(r)})}
+$('hist').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const x=H[b.dataset.i];
+ if(b.dataset.act==='done'){x.reviewed=true;save('ra_history',H);renderHist()}
+ if(b.dataset.act==='remind'){const body=encodeURIComponent('Just a gentle reminder: '+msg(x.name,x.job));
+  go(x.via==='email'&&x.email?'mailto:'+encodeURIComponent(x.email)+'?subject='+encodeURIComponent('Quick reminder from '+(S.biz||'us'))+'&body='+body:'sms:'+(x.mobile||'').replace(/\s/g,'')+'?&body='+body);
+  x.date=Date.now();save('ra_history',H);renderHist();toast('Reminder opened')}});
+$('clearHist').addEventListener('click',()=>{if(confirm('Clear all history?')){H=[];save('ra_history',H);renderHist()}});
+function route(){const q=new URLSearchParams(location.search).get('r');const m=q?[0,q]:location.hash.match(/^#r=(.+)/);if(!m){if(!$('landing').classList.contains('hidden'))show('ask');return}
+ let d;try{d=JSON.parse(decodeURIComponent(escape(atob(m[1]))))}catch(e){d={b:'',l:{}}}
+ $('lTitle').textContent='Review '+(d.b||'us');$('hdr').textContent=d.b||'ReviewAsk';const box=$('lSites');box.innerHTML='';
+ const ks=SITES.filter(s=>d.l&&d.l[s]);if(!ks.length)box.innerHTML='<p class="note">No review links set yet (add them in Settings).</p>';
+ ks.forEach(s=>{const a=document.createElement('a');a.className='btn site';a.textContent='Review on '+s;a.href=d.l[s];a.target='_blank';a.rel='noopener';box.appendChild(a)});show('landing')}
+$('backApp').addEventListener('click',()=>{if(location.search||location.hash){location.href=location.pathname;return}$('hdr').textContent='ReviewAsk';show('ask')});
+document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab)));
+window.addEventListener('hashchange',route);
+window.__seedOld=()=>{H.push({name:'Old Customer',email:'a@b.com',mobile:'',job:'Gutters',via:'email',date:Date.now()-9*864e5,reviewed:false});save('ra_history',H)};
+upd();route();if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});});
+</script></body></html>
