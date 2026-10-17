@@ -1,0 +1,51 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Join free | BrandsWhoCare</title><meta name="description" content="BrandsWhoCare (brandswhocare.co.uk): free brand discounts for private health professionals, carers and disabled people. Coming soon.">
+<link rel="stylesheet" href="css/styles.css"><link rel="icon" href="img/brand/favicon.ico" sizes="any"><link rel="icon" type="image/svg+xml" href="img/brand/bwc_icon.svg"><link rel="apple-touch-icon" href="img/brand/bwc_icon_192.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4B2E83"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="prelaunch" role="note"><b>Coming soon</b> brandswhocare.co.uk is in pre-launch. This is a preview and the offers shown are sample data.</div>
+<header class="nav"><div class="wrap"><a class="logo" href="index.html" aria-label="BrandsWhoCare home"><img src="img/brand/bwc_logo_header.svg" alt="BrandsWhoCare" width="278" height="54"></a>
+<nav aria-label="Main"><button class="menu-btn" aria-expanded="false" aria-controls="menu">Menu</button><ul id="menu"><li><a href="index.html">Home</a></li><li><a href="index.html#how">How it works</a></li><li><a href="offers.html">Offers</a></li><li><a href="brands.html">Brands</a></li><li><a href="community.html">Community</a></li><li><a href="faq.html">FAQ</a></li><li><a href="dashboard.html">Member area</a></li><li><a class="btn btn-primary" style="padding:9px 18px;text-decoration:none" href="join.html">Join free</a></li></ul></nav></div></header>
+<main id="main">
+<section class="alt"><div class="wrap"><div class="center"><span class="eyebrow">Free membership</span><h1 style="font-size:clamp(2rem,4vw,3rem)">Join BrandsWhoCare</h1><p class="lead">Choose your group, tell us who you are, and we'll confirm you're eligible. <b>Preview only: nothing is uploaded or sent.</b></p></div>
+<div id="verify" class="center" style="margin-top:40px"><h2>How we verify you</h2><p class="lead">Membership is only for the people it's meant for, so we check every member once.</p>
+<div class="verify-steps">
+<div class="card"><span class="pill">Usually instant</span><h3>🩺 Health professionals</h3><p>Give your registration number and choose your register. We check it against that regulator's public register.</p></div>
+<div class="card"><span class="pill">Reviewed by a person</span><h3>🤝 Carers</h3><p>Upload proof such as a Carer's Allowance letter, a letter from your care agency or employer, or a local authority carer's assessment.</p></div>
+<div class="card"><span class="pill">Reviewed by a person</span><h3>♿ Disabled people</h3><p>Upload proof such as a PIP, DLA or Attendance Allowance award letter, a Blue Badge, or similar.</p></div></div>
+<p style="margin-top:18px">A member of our team reviews uploaded proof, usually within <b>[X] working days</b>. We only use it to check eligibility. See our <a href="privacy.html#proof">Privacy policy</a>.</p></div>
+<form id="join-flow" class="form-card" novalidate>
+<div class="progress" aria-hidden="true"><span class="on"></span><span></span><span></span></div><div class="plabels" aria-hidden="true"><span>Your details</span><span>Verification</span><span>Unlocked</span></div>
+<fieldset><legend>I am a…</legend><div class="types">
+<label class="type"><input type="radio" name="type" value="health-professional" checked><span>🩺 Health professional</span></label>
+<label class="type"><input type="radio" name="type" value="carer"><span>🤝 Carer</span></label>
+<label class="type"><input type="radio" name="type" value="disabled"><span>♿ Disabled person</span></label></div></fieldset>
+<label for="fullName">Full name</label><input id="fullName" name="fullName" autocomplete="name" required>
+<label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required>
+<div id="route-hp" class="route"><h3>Check my registration</h3>
+<label for="register">Your register</label><select id="register" name="register"><option value="">Choose a register…</option><option value="HCPC">HCPC: Health and Care Professions Council</option><option value="NMC">NMC: Nursing and Midwifery Council</option><option value="GMC">GMC: General Medical Council</option><option value="GPhC">GPhC: General Pharmaceutical Council</option><option value="GDC">GDC: General Dental Council</option><option value="GOsC">GOsC: General Osteopathic Council</option><option value="GCC">GCC: General Chiropractic Council</option><option value="SWE">SWE: Social Work England</option></select>
+<label for="regNumber">Registration number</label><input id="regNumber" name="regNumber" autocomplete="off">
+<p class="hint">We check this against the public register, usually instantly. Demo: any number of 4+ characters passes.</p></div>
+<div id="route-carer" class="route" hidden><h3>Upload proof you're a carer</h3>
+<label for="carerProof">Type of proof</label><select id="carerProof"><option value="">Choose…</option><option value="carers-allowance">Carer's Allowance letter</option><option value="agency-letter">Care agency or employer letter</option><option value="la-assessment">Local authority carer's assessment</option><option value="other">Other (we'll be in touch)</option></select>
+<label for="carerFile">Document (PDF, JPG or PNG, up to 10 MB)</label><input id="carerFile" type="file" accept=".pdf,.jpg,.jpeg,.png">
+<p class="hint">Reviewed by a person, usually within [X] working days. You can cover up anything we don't need, such as bank details.</p></div>
+<div id="route-dis" class="route" hidden><h3>Upload proof of disability</h3>
+<label for="disProof">Type of proof</label><select id="disProof"><option value="">Choose…</option><option value="pip">PIP award letter</option><option value="dla">DLA award letter</option><option value="attendance-allowance">Attendance Allowance award letter</option><option value="blue-badge">Blue Badge</option><option value="other">Other similar proof</option></select>
+<label for="disFile">Document (PDF, JPG or PNG, up to 10 MB)</label><input id="disFile" type="file" accept=".pdf,.jpg,.jpeg,.png">
+<p class="hint">Reviewed by a person, usually within [X] working days. We never need your full medical details.</p></div>
+<label class="check" style="margin-top:18px"><input type="checkbox" name="consent" id="consent" required> <span>I give my explicit consent for BrandsWhoCare to process my information, including any health or disability information in documents I provide, only to check my eligibility, as described in the <a href="privacy.html#proof">Privacy policy</a>. I can withdraw this consent at any time.</span></label>
+<button class="btn btn-primary" type="submit" style="margin-top:20px;width:100%;justify-content:center">Verify and join free</button>
+<div id="jstatus" class="status" role="status" aria-live="polite"></div></form>
+<div id="workemail" class="form-card" style="margin-top:24px"><h2 style="margin-top:0;font-size:1.3rem">Other ways to verify</h2>
+<h3 style="font-size:1.05rem">Verify with your work email</h3><p class="fsmall">If you work for a care provider, NHS or private clinic, we can send a one-time code to your work email.</p>
+<form id="we-form" novalidate><label for="we">Work email</label><input id="we" type="email" autocomplete="email" placeholder="name@yourcareprovider.co.uk"><button class="btn btn-primary" type="submit" style="margin-top:12px">Send code (demo)</button><div id="we-st" class="status" role="status"></div></form>
+<h3 style="font-size:1.05rem;margin-top:24px">No work email? Upload ID or a payslip</h3><p class="fsmall">Upload a staff ID badge or a recent payslip (cover up pay and bank details). Reviewed by a person, usually within [X] working days.</p>
+<form id="pay-form" novalidate><label for="payType">Document</label><select id="payType"><option value="">Choose…</option><option value="staff-id">Staff ID badge</option><option value="payslip">Recent payslip</option></select><label for="payFile">File (PDF, JPG or PNG, up to 10 MB)</label><input id="payFile" type="file" accept=".pdf,.jpg,.jpeg,.png"><button class="btn btn-ghost" type="submit" style="margin-top:12px">Submit for review (demo)</button><div id="pay-st" class="status" role="status"></div></form></div></div></section>
+</main><footer><div class="wrap"><div class="cols"><div><a class="logo" href="index.html" aria-label="BrandsWhoCare home"><img src="img/brand/bwc_icon.svg" alt="" width="36" height="36" class="ficon"><span><span class="b">Brands</span><span class="w">WhoCare</span></span></a>
+<p>Free discounts from brands that care, for the people who care for everyone else.</p><p>brandswhocare.co.uk · Pre-launch preview</p></div>
+<div><h3>Explore</h3><ul><li><a href="offers.html">Offers</a></li><li><a href="brands.html">Brands A to Z</a></li><li><a href="competitions.html">Competitions</a></li><li><a href="index.html#how">How it works</a></li><li><a href="index.html#who">Who it's for</a></li></ul></div>
+<div><h3>Members</h3><ul><li><a href="join.html">Join free</a></li><li><a href="dashboard.html">Member area</a></li></ul></div>
+<div><h3>Company</h3><ul><li><a href="about.html">About us</a></li><li><a href="community.html">Community</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li><li><a href="affiliate-disclosure.html">Affiliate disclosure</a></li><li><a href="accessibility.html">Accessibility</a></li></ul></div>
+<div><h3>Legal</h3><ul><li><a href="terms.html">Terms</a></li><li><a href="privacy.html">Privacy</a></li><li><a href="cookies.html">Cookies</a></li><li><a href="#" data-cookie-reset>Cookie settings</a></li></ul></div></div>
+<p class="small">© 2026 BrandsWhoCare. Not yet launched. All brands and offers shown are fictional sample data. Some links may earn us affiliate commission once live.</p></div></footer>
+<script src="js/adapters/awin.js"></script><script src="js/adapters/commissionFactory.js"></script><script src="js/offers.js"></script><script src="js/verify.js"></script><script src="js/app.js"></script><script src="js/join.js"></script><script src="js/join-extra.js"></script><script src="js/extras.js"></script><script src="js/cookie-consent.js"></script></body></html>
