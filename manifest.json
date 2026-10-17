@@ -1,1 +1,2 @@
-{"name":"BrandsWhoCare","short_name":"BrandsWhoCare","description":"Free discounts for private health professionals, carers and disabled people (demo).","start_url":"dashboard.html","scope":"./","display":"standalone","background_color":"#FFFFFF","theme_color":"#4B2E83","icons":[{"src":"img/brand/bwc_icon_192.png","sizes":"192x192","type":"image/png"},{"src":"img/brand/bwc_icon_512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
+{"name":"ReviewAsk","short_name":"ReviewAsk","start_url":"./","scope":"./","display":"standalone","background_color":"#f3f5f8","theme_color":"#1b6ef3",
+"icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
